@@ -1,0 +1,19 @@
+$user = App\Models\User::first();
+if (!$user) {
+    $user = App\Models\User::forceCreate(['name'=>'Test', 'email'=>'t@t.com', 'password'=>'123']);
+}
+Auth::login($user);
+
+$controller = new App\Http\Controllers\QuizController();
+$request = new Illuminate\Http\Request();
+$request->merge(['limit' => 3]);
+
+$response = $controller->generate($request);
+$data = $response->getData(true);
+
+echo "Questions Generated: " . count($data) . "\n";
+foreach ($data as $q) {
+    echo "Q: " . mb_substr($q['question'], 0, 30) . "...\n";
+    echo "Options Count: " . count($q['options']) . "\n";
+    // echo "Type: " . $q['type'] . "\n";
+}
