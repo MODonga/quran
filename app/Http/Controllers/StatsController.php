@@ -35,12 +35,26 @@ class StatsController extends Controller
             ->where('status', 'pending')
             ->exists();
 
+        // 4. Most Failed Ayahs
+        $mostFailedAyahs = DB::table('user_answers')
+            ->join('questions', 'user_answers.question_id', '=', 'questions.id')
+            ->join('ayahs', 'questions.ayah_id', '=', 'ayahs.id')
+            ->join('surahs', 'ayahs.surah_id', '=', 'surahs.id')
+            ->where('user_answers.user_id', $user->id)
+            ->where('user_answers.is_correct', false)
+            ->select('surahs.name_ar as surah', 'ayahs.ayah_number', DB::raw('count(user_answers.id) as fails'))
+            ->groupBy('surahs.name_ar', 'ayahs.ayah_number')
+            ->orderByDesc('fails')
+            ->take(5)
+            ->get();
+
         return response()->json([
             'memorized_ayahs'     => $memorizedCount,
             'streak'              => $user->quran_streak,
             'total_days'          => $user->quran_total_days,
             'accuracy'            => $accuracy,
             'has_pending_reviews' => $hasPendingReviews,
+            'most_failed_ayahs'   => $mostFailedAyahs,
         ]);
     }
 }
