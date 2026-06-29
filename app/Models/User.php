@@ -24,11 +24,12 @@ class User extends Authenticatable
         'password',
         'current_level',
         'last_ayah_id',
+        'last_hadith_id',      // ← added: needed by HadithSessionController
         'quran_streak',
         'quran_total_days',
         'hadith_streak',
         'hadith_total_days',
-        'streak', // Keeping for backward compatibility/reference if needed
+        'streak',              // Keeping for backward compatibility
         'total_days',
     ];
 

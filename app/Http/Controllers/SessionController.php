@@ -36,13 +36,14 @@ class SessionController extends Controller
 
             return response()->json([
                 'session_id' => $session->id,
-                'status' => 'viewing', // Keep UI in viewing mode
-                'mode' => 'review', // Frontend flag
-                'next_ayah' => [
-                    'ayah_id' => $reviewAyah->ayah->id,
-                    'surah_id' => $reviewAyah->ayah->surah_id,
-                    'text' => $reviewAyah->ayah->text_uthmani,
-                    'surah_name' => $reviewAyah->ayah->surah->name_ar,
+                // 'review_pending' triggers the redirect-to-review flow in the frontend
+                'status'     => 'review_pending',
+                'mode'       => 'review',
+                'next_ayah'  => [
+                    'ayah_id'     => $reviewAyah->ayah->id,
+                    'surah_id'    => $reviewAyah->ayah->surah_id,
+                    'text'        => $reviewAyah->ayah->text_uthmani,
+                    'surah_name'  => $reviewAyah->ayah->surah->name_ar,
                     'ayah_number' => $reviewAyah->ayah->ayah_number,
                 ],
                 'message' => 'Time for review!',

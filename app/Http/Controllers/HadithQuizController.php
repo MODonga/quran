@@ -174,4 +174,29 @@ class HadithQuizController extends Controller
         if (str_contains($gradeLower, 'daif') || str_contains($gradeLower, 'weak')) return 'ضعيف';
         return $grade;
     }
+
+    /**
+     * Submit the result of a hadith quiz question.
+     * Records whether the user answered correctly.
+     */
+    public function submit(Request $request)
+    {
+        $request->validate([
+            'hadith_id'  => 'required|exists:hadiths,id',
+            'is_correct' => 'required|boolean',
+        ]);
+
+        $user = Auth::user();
+
+        \App\Models\HadithUserAnswer::create([
+            'user_id'    => $user->id,
+            'hadith_id'  => $request->hadith_id,
+            'is_correct' => $request->is_correct,
+        ]);
+
+        return response()->json([
+            'status'  => 'recorded',
+            'correct' => $request->is_correct,
+        ]);
+    }
 }

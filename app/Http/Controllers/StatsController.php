@@ -29,11 +29,18 @@ class StatsController extends Controller
         $total = UserAnswer::where('user_id', $user->id)->count();
         $accuracy = $total ? round(($correct / $total) * 100, 2) : 0;
 
+        // 3. Pending Reviews Check
+        $hasPendingReviews = \App\Models\ReviewSchedule::where('user_id', $user->id)
+            ->where('scheduled_at', '<=', now())
+            ->where('status', 'pending')
+            ->exists();
+
         return response()->json([
-            'memorized_ayahs' => $memorizedCount,
-            'streak' => $user->quran_streak,
-            'total_days' => $user->quran_total_days,
-            'accuracy' => $accuracy,
+            'memorized_ayahs'     => $memorizedCount,
+            'streak'              => $user->quran_streak,
+            'total_days'          => $user->quran_total_days,
+            'accuracy'            => $accuracy,
+            'has_pending_reviews' => $hasPendingReviews,
         ]);
     }
 }

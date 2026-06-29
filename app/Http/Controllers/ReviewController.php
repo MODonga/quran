@@ -13,13 +13,20 @@ class ReviewController extends Controller
      */
     public function submit(Request $request)
     {
+        // Accept both 'success' (legacy) and 'is_correct' (frontend naming) for compatibility
         $request->validate([
-            'ayah_id' => 'required|exists:ayahs,id',
-            'success' => 'required|boolean',
+            'ayah_id'    => 'required|exists:ayahs,id',
+            'success'    => 'nullable|boolean',
+            'is_correct' => 'nullable|boolean',
         ]);
 
+        // Normalize: prefer 'success', fall back to 'is_correct'
+        $success = $request->has('success')
+            ? (bool) $request->success
+            : (bool) $request->is_correct;
+
         $user = Auth::user();
-        
+
         $review = ReviewSchedule::where('user_id', $user->id)
             ->where('ayah_id', $request->ayah_id)
             ->where('status', 'pending')
@@ -29,7 +36,7 @@ class ReviewController extends Controller
             return response()->json(['message' => 'No pending review found for this ayah.'], 404);
         }
 
-        $review->reschedule($request->success);
+        $review->reschedule($success);
 
         return response()->json([
             'status' => 'success',

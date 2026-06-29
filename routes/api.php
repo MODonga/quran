@@ -54,9 +54,15 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/hadith/stats', [\App\Http\Controllers\HadithStatsController::class, 'index']);
     Route::post('/hadith/session/start', [HadithSessionController::class, 'start']);
     Route::post('/hadith/session/confirm', [HadithSessionController::class, 'confirm']);
-    
+
+    // Hadith Review Logic
+    Route::get('/hadith-review/due', [HadithReviewController::class, 'getDue']);
+    Route::post('/hadith-review/confirm', [HadithReviewController::class, 'confirm']);
+
+    // Hadith Quiz Logic
     Route::get('/hadith-quiz/generate', [HadithQuizController::class, 'generate']);
-    
+    Route::post('/hadith-quiz/submit', [HadithQuizController::class, 'submit']);
+
     Route::get('/hadith/books', [HadithController::class, 'indexBooks']);
     Route::get('/hadith/books/{book}/chapters', [HadithController::class, 'indexChapters']);
     Route::get('/hadith/books/{book}/hadiths', [HadithController::class, 'indexHadiths']);
